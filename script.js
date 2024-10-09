@@ -120,7 +120,7 @@ function calculateWeight() {
                     const diameterRound = values[1] / 1000; // القطر بالمتر
         
                     // حساب الوزن
-                    weight = lengthRound * (Math.PI / 4) * Math.pow(diameterRound, 2) * density;
+                    weight = (lengthRound * (Math.PI / 4) * Math.pow(diameterRound, 2) * density)/1000;
                     break;
         
             case "Flat Steel Bars":
