@@ -84,30 +84,15 @@ function calculateWeight() {
                 weight = (lengthPipe / 1000) * (Math.PI / 4) * (Math.pow(outerDiameter, 2) - Math.pow(innerDiameter, 2)) * (density); // in grams
                 break;
 
-            case "Hollow Structural Sections - Square":
-                const [lengthSquare, outerDiameterSquare, thicknessSquare] = values;
-                weight = (outerDiameterSquare - thicknessSquare) * thicknessSquare * 0.025 * lengthSquare; // الوزن بالجرام
-                break;
+
 
             case "Hollow Structural Sections - Rectangular":
                 const [lengthRect, widthRect, heightRect, thicknessRect] = values;
                 weight = lengthRect * ((widthRect * heightRect) - ((widthRect - 2 * thicknessRect) * (heightRect - 2 * thicknessRect))) * density; // in grams
                 break;
 
-            case "Round Steel Bars":
-                const [lengthRound, diameterRound] = values;
-                weight = lengthRound * (Math.PI / 4) * Math.pow(diameterRound, 2) * density; // in grams
-                break;
 
-            case "Square Steel Bars":
-                const [lengthSquareBar, sideLengthSquareBar] = values;
-                weight = lengthSquareBar * Math.pow(sideLengthSquareBar, 2) * density; // in grams
-                break;
-
-            case "Flat Bars":
-                const [lengthFlat, widthFlat, thicknessFlat] = values;
-                weight = lengthFlat * widthFlat * (thicknessFlat / 1000) * density; // in grams
-                break;
+            
 
             case "Equal Angles":
                 const [lengthAngle, legLengthAngle, thicknessAngle] = values;
@@ -129,22 +114,61 @@ function calculateWeight() {
                 weight = lengthT * ((widthT * heightT) - ((widthT - thicknessT) * (heightT - thicknessT))) * density; // in grams
                 break;
 
-            case "Hexagonal Sections": {
-                const [lengthHexagon, flatToFlatDistance] = values; // المسافة بين الجوانب المتقابلة
-                const sideLength = flatToFlatDistance / Math.sqrt(3); // حساب طول الجانب بناءً على المسافة بين الجوانب المتقابلة
-                const areaHexagon = (3 * Math.sqrt(3) / 2) * Math.pow(sideLength, 2); // area of the hexagonal section
-                weight = lengthHexagon * areaHexagon * density; // in grams
-                break;
+            case "Round Steel Bars":
+                    // تحويل المدخلات من مليمترات إلى أمتار
+                    const lengthRound = values[0] / 1000; // الطول بالمتر
+                    const diameterRound = values[1] / 1000; // القطر بالمتر
+        
+                    // حساب الوزن
+                    weight = lengthRound * (Math.PI / 4) * Math.pow(diameterRound, 2) * density;
+                    break;
+        
+            case "Flat Steel Bars":
+                    // تحويل المدخلات من مليمترات إلى أمتار
+                    const lengthFlat = values[0] / 1000; // الطول بالمتر
+                    const widthFlat = values[1] / 1000; // العرض بالمتر
+                    const thicknessFlat = values[2] / 1000; // السمك بالمتر
+        
+                    // حساب الوزن
+                    weight = lengthFlat * widthFlat * thicknessFlat * density;
+                    break;
+        
+            case "Hexagonal Steel Bars":
+                    // تحويل المدخلات من مليمترات إلى أمتار
+                    const lengthHex = values[0] / 1000; // الطول بالمتر
+                    const diameterHex = values[1] / 1000; // القطر بالمتر
+        
+                    // حساب مساحة السداسي المنتظم
+                    const areaHex = ((3 * Math.sqrt(3)) / 2) * Math.pow(diameterHex, 2);
+        
+                    // حساب الوزن
+                    weight = lengthHex * areaHex * density;
+                    break;
+        
+            case "Square Steel Bars":
+                    // تحويل المدخلات من مليمترات إلى أمتار
+                    const lengthSquare = values[0] / 1000; // الطول بالمتر
+                    const sideSquare = values[1] / 1000; // طول الضلع بالمتر
+        
+                    // حساب الوزن
+                    weight = lengthSquare * Math.pow(sideSquare, 2) * density;
+                    break;
             }
         }
 
         // تحويل الوزن من جرامات إلى كيلوغرامات وأجزاء الجرام
-        const weightInKg = Math.floor(weight / 1000); // الجزء الخاص بالكيلوغرامات
-        const weightInGrams = (weight % 1000).toFixed(0); // الجزء الخاص بالجرامات (المتبقي)
+       // تحويل الوزن إلى كيلوجرامات
+    weight = weight.toFixed(3); // تقريب الوزن إلى 3 منازل عشرية
 
-        // عرض الوزن بالشكل الصحيح
-        document.getElementById("result").innerHTML = `Weight: ${weightInKg}.${weightInGrams.padStart(3, '0')} kg`;
+    // تحويل الوزن إلى كيلوجرامات وجرامات
+    const kg = Math.floor(weight); // جزء الكيلوجرامات
+    const grams = Math.round((weight - kg) * 1000); // جزء الجرامات
+
+    // عرض النتيجة
+    if (grams > 0) {
+        console.log(`Weight: ${kg} kg ${grams} g`); // عرض الوزن بالكيلوجرامات والجرامات
     } else {
-        document.getElementById("result").innerHTML = "Please select a steel section type and enter the dimensions.";
+        console.log(`Weight: ${kg} kg`); // إذا لم يكن هناك جرامات فقط الكيلوجرامات
     }
+
 }
